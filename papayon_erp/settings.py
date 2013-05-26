@@ -16,7 +16,7 @@ DATABASES = {
         'NAME': 'papayon_erp_db',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': 'papayon_admin',
-        'PASSWORD': 'papayanerp',
+        'PASSWORD': 'papayonerp',
         'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',                      # Set to empty string for default.
     }
@@ -127,6 +127,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'django_extensions',
+    'erp',
+    'clients_front',
 )
 
 # A sample logging configuration. The only tangible logging
