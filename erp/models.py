@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+    
 class ProviderEntity(models.Model):
 
     PROVIDER_TYPE_CHOICES = (
@@ -87,8 +87,27 @@ class DocumentEntity(models.Model):
         verbose_name_plural = 'Documentos'
 
 
-# class PurchaseOrderEntity(models.Model):
-#     order_number = models.
+class PurchaseOrderEntity(models.Model):
+
+    STATUS_CHOICES = (
+        (1, 'En espera'),
+        (2, 'Aceptada'),
+        (3, 'Denegada'),
+    )
+    order_number = models.IntegerField()
+    purchase_date = models.DateField()
+    delivery_date = models.DateField()
+    provider = models.ForeignKey('ProviderEntity', related_name='purchase_orders')
+    status = models.IntegerField(choices=STATUS_CHOICES)
+    description = models.TextField(blank=True, null=True)
+
+    def __unicode__(self):
+        return '%d' % self.order_number
+
+    class Meta:
+        verbose_name = 'Orden de Compra'
+        verbose_name_plural = 'Ordenes de Compra'
+
     
 class ItemEntity(models.Model):
     name = models.CharField(max_length=300)
@@ -102,7 +121,19 @@ class ItemEntity(models.Model):
         verbose_name_plural = 'Items'
 
 
-    
+        
 class ItemInPurchaseOrderEntity(models.Model):
-    pass
+
+    quantity = models.IntegerField()
+    unit_price = models.IntegerField()
+    purchase_order = models.ForeignKey('PurchaseOrderEntity', related_name='items')
+    item = models.ForeignKey('ItemEntity', related_name='items_in_purchase_orders')
+
+
+    def __unicode__(self):
+        return self.item.name
+
+    class Meta:
+        verbose_name = 'Item en Orden'
+        verbose_name_plural = 'Items en Ordenes'
 
