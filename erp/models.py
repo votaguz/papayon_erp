@@ -1,28 +1,107 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class ProviderEntity(models.Model):
-    pass
+
+    PROVIDER_TYPE_CHOICES = (
+        (1, 'Natural'),
+        (2, 'Juridica'),
+    )
+
+    ID_TYPE_CHOICES = (
+       (1, 'Cedula de Ciudadania'),
+       (2, 'RUT'),
+       (3, 'Pasaporte'),
+    )
+
+    city = models.ForeignKey('CityEntity', related_name='providers')
+    provider_type = models.IntegerField(choices=PROVIDER_TYPE_CHOICES)
+    phone = models.CharField(max_length=20)
+    fax = models.CharField(max_length=20)
+    address = models.CharField(max_length=140)
+    name = models.CharField(max_length=140)
+    last_name = models.CharField(max_length=140)
+    id_type = models.IntegerField(choices=ID_TYPE_CHOICES)
+    id_number = models.CharField(max_length=140)
+    reason = models.CharField(max_length=500)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Proveedor'
+        verbose_name_plural = 'Proveedores'
 
 class CityEntity(models.Model):
-    pass
+    department = models.ForeignKey('DepartmentEntity', related_name='cities')
+    name = models.CharField(max_length=140)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Ciudad'
+        verbose_name_plural = 'Ciudades'
 
 class DepartmentEntity(models.Model):
-    pass
+    country = models.ForeignKey('CountryEntity', related_name='deparments')
+    name = models.CharField(max_length=140)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Departamento'
+        verbose_name_plural = 'Departamentos'
+
 
 class CountryEntity(models.Model):
-    pass
+    name = models.CharField(max_length=140)
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Pais'
+        verbose_name_plural = 'Paises'
+
     
 class ContactEntity(models.Model):
     pass
     
 class DocumentEntity(models.Model):
-    pass
-    
-class PurchaseOrderEntity(models.Model):
-    pass
+    DOCUMENT_TYPE_CHOICES = (
+        (1, 'RUT'),
+        (2, 'Certificado Bancario'),
+        (3, 'Camara de Comercio'),
+    )
+    provider = models.ForeignKey('ProviderEntity', related_name='documents')
+    document_type = models.IntegerField(choices=DOCUMENT_TYPE_CHOICES)
+    vigence = models.CharField(max_length=140, blank=True, null=True)
+    document_file = models.FileField(upload_to='providers_documents/', blank=True, null=True)
+    def __unicode__(self):
+        return self.document_type
+
+    class Meta:
+        verbose_name = 'Documento'
+        verbose_name_plural = 'Documentos'
+
+
+# class PurchaseOrderEntity(models.Model):
+#     order_number = models.
     
 class ItemEntity(models.Model):
-    pass
+    name = models.CharField(max_length=300)
+    description = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Item'
+        verbose_name_plural = 'Items'
+
+
     
 class ItemInPurchaseOrderEntity(models.Model):
     pass
