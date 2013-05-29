@@ -67,7 +67,22 @@ class CountryEntity(models.Model):
 
     
 class ContactEntity(models.Model):
+    name = models.CharField(max_length=140)
+    last_name = models.CharField(max_length=140)
+    id_number = models.CharField(max_length=140)
+    phone = models.CharField(max_length=20)
+    celphone = models.CharField(max_length=20)
+    mail = models.CharField(max_length=140)
+    provider = models.ForeignKey('ProviderEntity', related_name='contacts')
+    password = models.CharField(max_length=20)
+
+    def __unicode__(self):
+        return self.name
     pass
+
+    class Meta:
+        verbose_name = 'Contacto'
+        verbose_name_plural = 'Contactos'
     
 class DocumentEntity(models.Model):
     DOCUMENT_TYPE_CHOICES = (
