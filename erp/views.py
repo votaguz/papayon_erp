@@ -57,9 +57,11 @@ def update_status_purchase_order(request):
         return {'success': False, 'user': None}
 
     try:
-
+        user_modifier = ContactProvider.objects.get(id=user['id'])
         purchase_order = PurchaseOrderEntity.objects.get(id=order_id)
         purchase_order.status = status
+        purchase_order.modified_by = user_modifier
+
         purchase_order.save()
         data['success'] = True
     except Exception, e:
