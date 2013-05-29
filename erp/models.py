@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
     
 class ProviderEntity(models.Model):
 
@@ -24,6 +24,7 @@ class ProviderEntity(models.Model):
     id_type = models.IntegerField(choices=ID_TYPE_CHOICES)
     id_number = models.CharField(max_length=140)
     reason = models.CharField(max_length=500)
+    is_authorized = models.BooleanField()
 
     def __unicode__(self):
         return self.name
@@ -94,6 +95,7 @@ class PurchaseOrderEntity(models.Model):
         (2, 'Aceptada'),
         (3, 'Denegada'),
     )
+    modified_by = models.ForeignKey('ContactEntity', related_name='modified_orders', blank=True, null=True)
     order_number = models.IntegerField()
     purchase_date = models.DateField()
     delivery_date = models.DateField()
@@ -103,6 +105,20 @@ class PurchaseOrderEntity(models.Model):
 
     def __unicode__(self):
         return '%d' % self.order_number
+
+    def to_json(self):
+        data = {}
+
+
+        data['order_number'] = self.order_number
+        data['order_id'] = self.id
+        data['purchase_date'] = self.purchase_date
+        data['delivery_date'] = self.delivery_date
+        data['provider'] = self.provider.name
+        data['status'] = self.get_status_display()
+        data['description'] = self.description
+
+        return data
 
     class Meta:
         verbose_name = 'Orden de Compra'
@@ -121,7 +137,6 @@ class ItemEntity(models.Model):
         verbose_name_plural = 'Items'
 
 
-        
 class ItemInPurchaseOrderEntity(models.Model):
 
     quantity = models.IntegerField()
@@ -136,4 +151,37 @@ class ItemInPurchaseOrderEntity(models.Model):
     class Meta:
         verbose_name = 'Item en Orden'
         verbose_name_plural = 'Items en Ordenes'
+
+
+
+class ContactProvider(models.Model):
+    first_name = models.CharField(max_length=140)
+    last_name = models.CharField(max_length=140)
+    document_id = models.CharField(max_length=140)
+    provider = models.ForeignKey('ProviderEntity', related_name='contacts')
+    phone = models.CharField(max_length=140)
+    cellphone = models.CharField(max_length=140)
+    #Login Information
+    email = models.EmailField()
+    password = models.CharField(max_length=140)
+
+    def __unicode__(self):
+        return '%s %s' % (self.first_name, self.last_name)
+
+    def to_json_dict(self):
+        return {
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'document_id': self.document_id,
+            'phone': self.phone,
+            'cellphone': self.cellphone,
+            'email'   : self.email,
+            'provider_id': self.provider.id,
+        }
+
+    class Meta:
+        verbose_name = 'Contacto Proveedor'
+        verbose_name_plural = 'Contactos de Proveedores'
+
+
 
