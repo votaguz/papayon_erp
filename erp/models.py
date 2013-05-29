@@ -67,24 +67,6 @@ class CountryEntity(models.Model):
         verbose_name_plural = 'Paises'
 
     
-class ContactEntity(models.Model):
-    name = models.CharField(max_length=140)
-    last_name = models.CharField(max_length=140)
-    id_number = models.CharField(max_length=140)
-    phone = models.CharField(max_length=20)
-    celphone = models.CharField(max_length=20)
-    mail = models.CharField(max_length=140)
-    provider = models.ForeignKey('ProviderEntity', related_name='contacts')
-    password = models.CharField(max_length=20)
-
-    def __unicode__(self):
-        return self.name
-    pass
-
-    class Meta:
-        verbose_name = 'Contacto'
-        verbose_name_plural = 'Contactos'
-    
 class DocumentEntity(models.Model):
     DOCUMENT_TYPE_CHOICES = (
         (1, 'RUT'),
@@ -110,7 +92,7 @@ class PurchaseOrderEntity(models.Model):
         (2, 'Aceptada'),
         (3, 'Denegada'),
     )
-    modified_by = models.ForeignKey('ContactEntity', related_name='modified_orders', blank=True, null=True)
+    modified_by = models.ForeignKey('ContactProvider', related_name='modified_orders', blank=True, null=True)
     order_number = models.IntegerField()
     purchase_date = models.DateField()
     delivery_date = models.DateField()
@@ -168,7 +150,6 @@ class ItemInPurchaseOrderEntity(models.Model):
         verbose_name_plural = 'Items en Ordenes'
 
 
-
 class ContactProvider(models.Model):
     first_name = models.CharField(max_length=140)
     last_name = models.CharField(max_length=140)
@@ -185,6 +166,7 @@ class ContactProvider(models.Model):
 
     def to_json_dict(self):
         return {
+            'id': self.id,
             'first_name': self.first_name,
             'last_name': self.last_name,
             'document_id': self.document_id,

@@ -25,7 +25,7 @@ def login_service(request):
 
 @csrf_exempt
 @json_response
-def logout(request):
+def logout_service(request):
     request.session['logged_user'] = None
     return {'success': True}
 
@@ -49,15 +49,21 @@ def list_purchase_orders(request):
 @json_response
 def update_status_purchase_order(request):
     data = {}
-
+    user = request.session.get('logged_user', '')
     order_id = request.POST.get('order_id', None)
     status = request.POST.get('status', None)
+
+    if not user:
+        return {'success': False, 'user': None}
+
     try:
+
         purchase_order = PurchaseOrderEntity.objects.get(id=order_id)
         purchase_order.status = status
         purchase_order.save()
         data['success'] = True
-    except:
+    except Exception, e:
         data['success'] = False
+        data['errors'] = e.message
 
     return data
