@@ -26,6 +26,25 @@ class ProviderEntity(models.Model):
     reason = models.CharField(max_length=500)
     is_authorized = models.BooleanField()
 
+
+    def to_json_dict(self):
+        data = {}
+
+        data['city'] = self.city.name
+        data['provider_type'] = self.get_provider_type_display()
+        data['phone'] = self.phone
+        data['fax'] = self.fax
+        data['address'] = self.address
+        data['name'] = self.name
+        data['last_name'] = self.last_name
+        data['id_type'] = self.get_id_type_display()
+        data['id_number'] = self.id_number
+        data['reason'] = self.reason
+        data['is_authorized'] = self.is_authorized
+
+        return data
+
+
     def __unicode__(self):
         return self.name
 
@@ -160,6 +179,7 @@ class ContactProvider(models.Model):
     #Login Information
     email = models.EmailField()
     password = models.CharField(max_length=140)
+    session_token = models.CharField(max_length=140)
 
     def __unicode__(self):
         return '%s %s' % (self.first_name, self.last_name)
