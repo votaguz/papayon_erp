@@ -180,7 +180,7 @@ class ContactProvider(models.Model):
     #Login Information
     email = models.EmailField()
     password = models.CharField(max_length=140)
-    session_token = models.CharField(max_length=140)
+    session_token = models.CharField(max_length=140, blank=True, null=True)
 
     def __unicode__(self):
         return '%s %s' % (self.first_name, self.last_name)
